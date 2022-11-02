@@ -1,5 +1,5 @@
 # 校园二手交易平台
-
+### 本项目是在spring-squirrel上进行的二次开发
 ## **项目介绍**
 ##### **项目原型:** [squirrel](https://github.com/hlk-1135/squirrel)
 ##### **项目原型的技术选型:**
