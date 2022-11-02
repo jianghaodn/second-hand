@@ -224,18 +224,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseResult getUserInfo(HttpServletRequest request) {
         System.out.println("获取用户信息");
-        // 可不可以从SecurityContextHolder中获取User呢？
-        String token = request.getHeader("token");
-        String phone = null;
-        try {
-            Claims claims = JwtUtil.parseJWT(token);
-            // 得到phone
-            phone = claims.getSubject();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            // 登录过期，重新登录,向前端写入重新登录的信息
-            return ResponseResult.loginFailResult();
-        }
+        String phone = SecurityUtils.getPhone();
         User userByPhone = getUserByPhone(phone);
         // 获取用户所持的闲置物品数量
         List<Goods> goods = goodsService.getGoodsByUserId(userByPhone.getId());

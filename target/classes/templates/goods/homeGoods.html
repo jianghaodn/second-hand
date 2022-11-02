@@ -522,7 +522,7 @@
                             } 
                             else if(res.data.code === 406){
                                 //认证失败，登录失败
-                                alert("登录失败")
+                                alert(res.data.msg)
                             }
                             else if (res.data.code === 501) {
                                 //token过期
