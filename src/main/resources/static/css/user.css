@@ -1,10 +1,11 @@
 .basic {
     float: left;
     width: 550px;
-    margin: 40px 0 0 100px;
+    margin: 10px 0 0 100px;
     display: table-row-group;
     vertical-align: middle;
     border-color: inherit;
+    /*background: red;*/
 }
 .basic h1 {
     margin-left: 140px;
@@ -172,8 +173,8 @@
     height: 100px;
 }
 .bannerimg {
-    background: url(../img/gdufe_bg.jpg) no-repeat;
-    height: 400px;
+    background: url('http://www.jw.swust.edu.cn/_upload/tpl/00/a2/162/template162/images/banner2.jpg') no-repeat;
+    height: 100%;
 }
 .bannerimg .bannerul {
     width: 530px;
@@ -182,6 +183,9 @@
     float: left;
     color: #000000;
     font-size: 20px;
+}
+.text1{
+    text-align: center;
 }
 .text2 {
     float: left;

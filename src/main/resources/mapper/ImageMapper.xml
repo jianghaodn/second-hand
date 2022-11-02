@@ -22,7 +22,7 @@
         from t_shop_image
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByGoodsPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    <select id="selectByGoodsId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
         select * from t_shop_image where goods_id = #{goodsId,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

@@ -1,6 +1,8 @@
 package com.squirrel.service;
 
 import com.squirrel.pojo.Goods;
+import com.squirrel.util.ResponseResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,11 @@ public interface GoodsService {
     public List<Goods> getGoodsByCatelog(Integer id,String name,String describle);
 
     /**
+     * 通过商品分类获取商品信息
+     */
+    public List<Goods> getGoodsByCatelog(Integer id);
+
+    /**
      * 根据分类id,并进行时间排序,获取前limit个结果
      * @param catelogId
      * @param limit
@@ -73,4 +80,7 @@ public interface GoodsService {
             int pageNum, int pageSize, int catelogId,
             String name, String describle);
 
+    ResponseResult searchGoods(String info);
+
+    ResponseResult uploadGoods(Goods goods, MultipartFile[] file);
 }

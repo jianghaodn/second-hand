@@ -1,5 +1,17 @@
 package com.squirrel.pojo;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
+
+/**
+ * @author Administrator
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Image {
     private Integer id;
 
@@ -7,27 +19,17 @@ public class Image {
 
     private String imgUrl;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getGoodsId() {
-        return goodsId;
-    }
-
-    public void setGoodsId(Integer goodsId) {
+    public Image(Integer goodsId, String imgUrl) {
         this.goodsId = goodsId;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
+        this.imgUrl = imgUrl;
     }
 
     public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl == null ? null : imgUrl.trim();
+        //去除图片链接前后的空格
+        if(StringUtils.hasText(imgUrl)){
+            this.imgUrl =  imgUrl.trim();
+        }else {
+            this.imgUrl = null;
+        }
     }
 }

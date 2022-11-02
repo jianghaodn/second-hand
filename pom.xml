@@ -3,20 +3,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.squirrel</groupId>
-	<artifactId>springboot-squirrel</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>com.rjgc</groupId>
+	<artifactId>second2019</artifactId>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
-	<name>springboot-squirrel</name>
-	<description>Demo project for Spring Boot</description>
+	<name>second-hand2019</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>2.7.1</version>
+		<relativePath/>
 	</parent>
+
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,36 +31,92 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>2.7.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.33</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			 <artifactId>jaxb-api</artifactId>
+			 <version>2.3.0</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>com.sun.xml.bind</groupId>
+			 <artifactId>jaxb-impl</artifactId>
+			 <version>2.3.0</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>com.sun.xml.bind</groupId>
+			 <artifactId>jaxb-core</artifactId>
+			 <version>2.3.0</version>
+		 </dependency>
+		 <dependency>
+			 <groupId>javax.activation</groupId>
+			 <artifactId>activation</artifactId>
+			 <version>1.1.1</version>
+		 </dependency>
+		 
+
+		<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-redis</artifactId>
+		<version>1.4.7.RELEASE</version>
+	</dependency>
+
 		<!-- 引入mybatis -->
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>1.3.0</version>
+			<version>2.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>2.6</version>
+		</dependency>
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.30</version>
 		</dependency>
 
 		<!-- thymeleaf模板 -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
+
 		<!-- 数据源 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
-			<!--<version>1.1.6</version>-->
-			<version>1.0.19</version>
+			<version>1.2.14</version>
+		</dependency>
+
+		<!--jwt依赖-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 
 		<!-- cache -->
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.github.ben-manes.caffeine</groupId>-->
+<!--			<artifactId>caffeine</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- apache工具包 -->
 		<dependency>
@@ -75,13 +131,6 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<!--导入apache工具类-->
-		<!-- 集合工具 -->
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<!--<version>3.2.2</version>-->
-		</dependency>
 		<!-- io工具 -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -93,19 +142,43 @@
 		<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
-			<version>1.2.3</version>
-		</dependency>
-
-		<!-- excel处理:POI -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.14</version>
+			<version>1.4.5</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--		七牛云-->
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.7.0, 7.10.99]</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.5</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -115,6 +188,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.7.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
 			</plugin>
 		</plugins>
 	</build>

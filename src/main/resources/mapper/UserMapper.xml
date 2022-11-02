@@ -12,9 +12,10 @@
         <result column="power" property="power" jdbcType="TINYINT" />
         <result column="last_login" property="lastLogin" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="portrait" property="portrait" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List" >
-        id, phone, username, password, QQ, create_at, goods_num, power, last_login, status
+        id, phone, username, password, QQ, create_at, goods_num, power, last_login, status,portrait
     </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select

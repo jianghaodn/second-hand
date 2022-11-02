@@ -1,558 +1,667 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="">
+
 <head>
     <meta charset="utf-8" />
-    <title>广财大二手工坊</title>
+    <title>西南科大二手交易市场</title>
+
     <link rel="stylesheet" th:href="@{/css/index.css}" />
 
-    <!--<script type="text/javascript" th:src="@{/js/jquery.js}" ></script>-->
-    <script type="text/javascript" th:src="@{/js/jquery-3.2.1.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
 
-    <script type="text/javascript" th:src="@{/js/materialize.min.js}" ></script>
-    <script type="text/javascript" th:src="@{/js/index.bundle.js}" ></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.41/dist/vue.global.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script type="text/javascript" th:src="@{/js/materialize.min.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/index.bundle.js}"></script>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>-->
+
+
     <link rel="stylesheet" th:href="@{/css/materialize-icon.css}" />
     <link rel="stylesheet" th:href="@{/css/user.css}" />
+    <link rel="stylesheet" href="/css/goods.css">
+
 </head>
-    <script>
-        function showLogin() {
-            if($("#signup-show").css("display")=='block'){
-                $("#signup-show").css("display","none");
-            }
-            if($("#login-show").css("display")=='none'){
-                $("#login-show").css("display","block");
-            }else{
-                $("#login-show").css("display","none");
-            }
-        }
-        function showSignup() {
-            if($("#login-show").css("display")=='block'){
-                $("#login-show").css("display","none");
-            }
-            if($("#signup-show").css("display")=='none'){
-                $("#signup-show").css("display","block");
-            }else{
-                $("#signup-show").css("display","none");
-            }
-        }
-        function ChangeName() {
-            if($("#changeName").css("display")=='none'){
-                $("#changeName").css("display","block");
-            }else{
-                $("#changeName").css("display","none");
-            }
-        }
-    </script>
-    <!-- TODO::IDEA关于thymeleaf的支持红色波浪线 -->
+
+<!-- TODO::IDEA关于thymeleaf的支持红色波浪线 -->
+
 <body ng-view="ng-view">
-<!--
-    时间：2018/01/04 21:59:08
+    <!--
     描述：顶部
 -->
-<div ng-controller="headerController" class="header stark-components navbar-fixed ng-scope">
-    <nav class="white nav1">
-        <div class="nav-wrapper">
-            <a th:href="@{/goods/homeGoods}" class="logo">
-                <!--<em class="em1">广财大</em>-->
-                <em class="em1">
-                    <span style="color: #4b82c3;">广</span>
-                    <span style="color: #ffd51f;">财</span>
-                    <span style="color: #b02b1a;">大</span>
-                </em>
-                <em class="em2">二手工坊</em>
-                <em class="em3">
-                    <span style="color: #d80000;">g</span>
-                    <span style="color: #48bdff;">d</span>
-                    <span style="color: #ea83ee;">u</span>
-                    <span style="color: #50dd5a;">f</span>
-                    <span style="color: #ee9946;">e</span>
-                    .market
-                </em>
-                <!--<em class="em3">gdufe.market</em>-->
-            </a>
-            <div class="nav-wrapper search-bar">
-                <form ng-submit="search()" class="ng-pristine ng-invalid ng-invalid-required" th:action="@{/goods/search}">
-                    <div class="input-field">
-                        <input id="search" name="str" placeholder="搜点什么吧..." style="height: 40px;"
-                               class="ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required"/>
-                        <label for="search" class="active">
-                            <i ng-click="search()" class="iconfont"></i>
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <ul class="right" th:if="${cur_user != null}">
-                <li class="publish-btn">
-                    <button data-position="bottom" class="red lighten-1 waves-effect waves-light btn">
-                        <a th:href="@{/goods/publishGoods}">我要发布</a>
-                    </button>
-                </li>
-                <li>
-                    <a th:href="@{/user/allGoods}">我发布的商品</a>
-                </li>
-                <li>
-                    <a th:text="${cur_user.username}"></a>
-                </li>
-                <li class="notification">
-                    <i ng-click="showNotificationBox()" class="iconfont"></i>
-                    <div ng-show="notification.tagIsShow" class="notification-amount red lighten-1 ng-binding ng-hide">0 </div>
-                </li>
-                <li class="changemore">
-                    <a class="changeMoreVertShow()">
-                        <i class="iconfont"></i>
+    <div class="app">
+        <div ng-controller="headerController" class="header stark-components navbar-fixed ng-scope">
+            <nav class="white nav1">
+                <div class="nav-wrapper">
+                    <a :href="pageURL.main" class="logo">
+                        <em class="em1">
+                            <span style="color: #4b82c3;">西</span>
+                            <span style="color: #ffd51f;">科</span>
+                            <span style="color: #b02b1a;">大</span>
+                        </em>
+                        <em class="em2">二手市场</em>
+                        <em class="em3">
+                            <span style="color: #d80000;">S</span>
+                            <span style="color: #48bdff;">W</span>
+                            <span style="color: #ea83ee;">U</span>
+                            <span style="color: #50dd5a;">S</span>
+                            <span style="color: #ee9946;">T</span>
+                            .market
+                        </em>
                     </a>
-                    <div class="more-vert">
-                        <ul class="dropdown-content">
-                            <li><a th:href="@{/user/home}">个人中心</a></li>
-                            <li><a>消息</a></li>
-                            <li><a th:onclick="'ChangeName()'">更改用户名</a></li>
-                            <li><a th:href="@{/user/logout}">退出登录</a></li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-            <ul class="right" th:if="${cur_user == null}">
-                <li class="publish-btn">
-                    <!--<button ng-click="showLogin()" data-position="bottom" data-delay="50"-->
-                            <!--data-tooltip="需要先登录哦！" class="red lighten-1 waves-effect waves-light btn" data-tooltip-id="510d3084-e666-f82f-3655-5eae4304a83a"	>-->
-                        <!--我要发布</button>-->
-                    <button th:onclick="'showLogin()'" data-position="bottom" data-delay="50"
-                            data-tooltip="需要先登录哦！" class="red lighten-1 waves-effect waves-light btn" data-tooltip-id="510d3084-e666-f82f-3655-5eae4304a83a"	>
-                        我要发布</button>
-                </li>
-                <li>
-                    <a th:onclick="'showLogin()'">登录</a>
-                </li>
-                <li>
-                    <a th:onclick="'showSignup()'">注册</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</div>
-<!--
-    时间：2018/01/04 22:54:16
-    描述：登录
--->
-<div ng-controller="loginController" class="ng-scope">
-    <div id="login-show" class="login stark-components">
-        <div class="publish-box z-depth-4">
-            <div class="row">
-                <a th:onclick="'showLogin()'">
-                    <div class="col s12 title"></div>
-                </a>
-                <form th:action="@{/user/login}" method="post" commandName="user" role="form">
-                    <div class="input-field col s12">
-                        <input type="text" name="phone" required="required" pattern="^1[0-9]{10}$" class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
-                        <label>手机</label>
-                    </div>
-                    <div class="input-field col s12">
-                        <input type="password" name="password" required="required" class="validate ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" />
-                        <label>密码</label>
-                        <a ng-click="showForget()" class="forget-btn">忘记密码？</a>
-                    </div>
-                    <button type="submit" class="waves-effect waves-light btn login-btn red lighten-1">
-                        <i class="iconfont left"></i>
-                        <em>登录</em>
-                    </button>
-                    <div class="col s12 signup-area">
-                        <em>没有账号？赶快</em>
-                        <a th:onclick="'showSignup()'" class="signup-btn">注册</a>
-                        <em>吧！</em>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!--
-    时间：2018/01/04 23:15:34
-    描述：注册
--->
-<div ng-controller="signupController" class="ng-scope">
-    <div id="signup-show" class="signup stark-components">
-        <div class="publish-box z-depth-4">
-            <div class="row">
-                <a th:onclick="'showSignup()'">
-                    <div class="col s12 title"></div>
-                </a>
-                <form th:action="@{/user/addUser}" method="post" commandName="user" role="form">
-                    <div class="input-field col s12">
-                        <input type="text" name="username" required="required" class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
-                        <label>昵称</label>
-                    </div>
-                    <div class="input-field col s12">
-                        <input type="text" name="phone" required="required" pattern="^1[0-9]{10}$" class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
-                        <label>手机</label>
-                    </div>
-                    <div class="input-field col s12">
-                        <input type="password" name="password" required="required" class="validate ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" />
-                        <label>密码</label>
-                    </div>
-                    <div ng-show="checkTelIsShow" class="col s12">
-                        <button type="submit" class="waves-effect waves-light btn verify-btn red lighten-1">
-                            <i class="iconfont left"></i>
-                            <em>点击注册</em>
-                        </button>
-                    </div>
-                    <div ng-show="checkTelIsShow" class="login-area col s12">
-                        <em>已有账号？去</em>
-                        <a th:onclick="'showLogin()'">登录</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!--
-    时间：2018/01/04 23:20:40
-    描述：更改用户名
--->
-<div ng-controller="changeNameController" class="ng-scope">
-    <div id="changeName" class="change-name stark-components">
-        <div class="publish-box z-depth-4">
-            <div class="row">
-                <div class="col s12 title">
-                    <h1>修改用户名</h1>
-                </div>
-                <form th:action="@{/user/changeName}" method="post" commandName="user" role="form">
-                    <div class="input-field col s12">
-                        <input type="text" name="username" required="required" class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
-                        <label>修改用户名</label>
-                    </div>
-                    <div ng-show="checkTelIsShow" class="col s12">
-                        <button class="waves-effect waves-light btn publish-btn red lighten-1">
-                            <i class="iconfont left"></i>
-                            <em>确认</em>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!--
-    时间：2018/01/04 23:35:54
-    描述：左侧导航条
--->
-<div ng-controller="sidebarController" class="sidebar stark-components ng-scope">
-    <li ng-class="{true: 'active'}[isAll]">
-        <a th:href="@{/goods/catelog/1}" class="index">
-            <img th:src="@{/img/index.png}" />
-            <em>最新发布</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isDigital]">
-        <a th:href="@{/goods/catelog/1}" class="digital">
-            <img th:src="@{/img/digital.png}"  />
-            <em>闲置数码</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isRide]">
-        <a th:href="@{/goods/catelog/2}" class="ride">
-            <img th:src="@{/img/ride.png}"/>
-            <em>校园代步</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isCommodity]">
-        <a th:href="@{/goods/catelog/3}" class="commodity">
-            <img th:src="@{/img/commodity.png}"/>
-            <em>电器日用</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isBook]">
-        <a th:href="@{/goods/catelog/4}" class="book">
-            <img th:src="@{/img/book.png}"/>
-            <em>图书教材</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isMakeup]">
-        <a th:href="@{/goods/catelog/5}" class="makeup">
-            <img th:src="@{/img/makeup.png}"/>
-            <em>美妆衣物</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isSport]">
-        <a th:href="@{/goods/catelog/6}" class="sport">
-            <img th:src="@{/img/sport.png}"/>
-            <em>运动棋牌</em>
-        </a>
-    </li>
-    <li ng-class="{true: 'active'}[isSmallthing]">
-        <a th:href="@{/goods/catelog/7}" class="smallthing">
-            <img th:src="@{/img/smallthing.png}"/>
-            <em>票券小物</em>
-        </a>
-    </li>
-    <div class="info">
-        <a href="" target="_blank">关于我们</a><em>-</em>
-        <a href="">联系我们</a>
-        <p>©2018 GDUFE</p>
-    </div>
-</div>
-<!--
-    时间：2018/01/04 23:51:14
-    描述：右侧显示部分
--->
-<div class="main-content">
-    <!--
-        时间：2018/01/04 23:51:14
-        描述：右侧banner（图片）部分
-    -->
-    <div class="slider-wapper">
-        <div class="slider" style="height: 440px; width: 800px; touch-action: pan-y; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
-            <ul class="slides" style="height: 400px;">
-                <li class="active" style="opacity: 1;">
-                    <a href="">
-                        <div class="bannerimg">
-                            <ul class="bannerul">
-                                <p class="text1">亲爱的同学们：</p>
-                                <p class="text2">欢迎来到广东财经大学校园二手工坊。临近毕业季的</p>
-                                <p class="text3">你，是否有太多的闲置与校友分享，为了追求更好的校园服</p>
-                                <p class="text4">务，我们打造了一个全新的校园平台——<span>广财大二手工坊</span></p>
-                                <p class="text5">这里有更多的闲置分享，更自由的校园话题讨论，你想要的，都在这里。</p>
-                                <!--<p class="text6">加入Squirrel，你的大学，应更精彩。</p>-->
-                            </ul>
-                            <!--<div class="logoimg">-->
-                                <!--<img th:src="@{/img/p_logo.jpg}" />-->
-                            <!--</div>-->
+                    <div class="nav-wrapper search-bar">
+                        <!--                    <form :action="''+searchInfo" >-->
+                        <div class="input-field">
+                            <input id="search" name="str" placeholder="搜点什么吧..." style="height: 40px;"
+                                v-model="searchInfo" v-on:keyup.enter="search"
+                                class="ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" />
+                            <label for="search" class="active">
+                                <!--                                     <i ng-click="search" class="iconfont" ></i>-->
+                                <i ng-click="search" class="iconfont"></i>
+                            </label>
                         </div>
-                    </a>
-                </li>
-            </ul>
+                        <!--                    </form>-->
+                    </div>
+                    <ul class="right" v-if="is_login">
+                        <li class="publish-btn">
+                            <button data-position="bottom" class="red lighten-1 waves-effect waves-light btn">
+                                <a :href="pageURL.publishGoods+'?target=upload'">我要发布</a>
+                            </button>
+                        </li>
+
+                        <li>
+                            <a :href="pageURL.myGoods">我发布的商品</a>
+                        </li>
+                        <!--                    显示用户姓名-->
+                        <li>
+                            <a>{{user.username}}</a>
+                        </li>
+                        <li class="notification">
+                            <i ng-click="showNotificationBox()" class="iconfont"></i>
+                            <div ng-show="notification.tagIsShow"
+                                class="notification-amount red lighten-1 ng-binding ng-hide">0
+                            </div>
+                        </li>
+                        <li class="changemore">
+                            <a class="changeMoreVertShow()">
+                                <i class="iconfont"></i>
+                            </a>
+                            <div class="more-vert">
+                                <ul class="dropdown-content">
+                                    <!--                                <li><a th:href="@{/user/home}">个人中心</a></li>-->
+                                    <!--                                <li><a>消息</a></li>-->
+                                    <!--                                <li><a th:onclick="'ChangeName()'">更改用户名</a></li>-->
+                                    <!--                                <li><a th:href="@{/user/logout}">退出登录</a></li>-->
+
+                                    <li><a :href="pageURL.home">个人中心</a></li>
+                                    <li><a>消息</a></li>
+                                    <li><a th:onclick="'ChangeName()'">更改用户名</a></li>
+                                    <li><a v-on:click="logout">退出登录</a></li>
+
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="right" v-show="is_login === false">
+                        <li class="publish-btn">
+                            <button th:onclick="'showLogin()'" data-position="bottom" data-delay="50"
+                                data-tooltip="需要先登录哦！" class="red lighten-1 waves-effect waves-light btn"
+                                data-tooltip-id="510d3084-e666-f82f-3655-5eae4304a83a">
+                                我要发布
+                            </button>
+                        </li>
+                        <li>
+                            <a th:onclick="'showLogin()'">登录</a>
+                        </li>
+                        <li>
+                            <a th:onclick="'showSignup()'">注册</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 11:17:51
-        描述：最新发布
+        <!--
+        描述：登录页面
     -->
-    <div class="index-title">
-        <a href="">最新发布</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods1}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
+        <div ng-controller="loginController" class="ng-scope" v-show="is_login==false">
+            <div id="login-show" class="login stark-components">
+                <div class="publish-box z-depth-4">
+                    <div class="row">
+                        <a th:onclick="'showLogin()'">
+                            <div class="col s12 title"></div>
+                        </a>
+                        <!--                    <form th:action="@{/user/login}" method="post" commandName="user" role="form">-->
+                        <!--                    <form  method="post" commandName="user" role="form">-->
+                        <div class="input-field col s12">
+                            <input type="text" name="phone" required="required" pattern="^1[0-9]{10}$"
+                                v-model="userInfo.phone"
+                                class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
+                            <label>手机</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <input type="password" name="password" required="required" v-model="userInfo.password"
+                                class="validate ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" />
+                            <label>密码</label>
+                            <a ng-click="showForget()" class="forget-btn">忘记密码？</a>
+                        </div>
+                        <button type="button" v-on:click="login"
+                            class="waves-effect waves-light btn login-btn red lighten-1">
+                            <i class="iconfont left"></i>
+                            <em>登录</em>
+                        </button>
+                        <div class="col s12 signup-area">
+                            <em>没有账号？赶快</em>
+                            <a th:onclick="'showSignup()'" class="signup-btn">注册</a>
+                            <em>吧！</em>
+                        </div>
+                        <!--                    </form>-->
                     </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 15:19:36
-        描述：闲置数码
+        <!--
+        描述：注册
     -->
-    <div class="index-title">
-        <a href="">闲置数码</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods1}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
+        <div ng-controller="signupController" class="ng-scope">
+            <div id="signup-show" class="signup stark-components">
+                <div class="publish-box z-depth-4">
+                    <div class="row">
+                        <a th:onclick="'showSignup()'">
+                            <div class="col s12 title"></div>
+                        </a>
+                        <div>
+                            <!--                    <form th:action="@{/user/addUser}" method="post" commandName="user" role="form">-->
+                            <div class="input-field col s12">
+                                <input type="text" name="username" required="required" v-model="registerInfo.username"
+                                    class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
+                                <label>昵称</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="text" name="phone" required="required" pattern="^1[0-9]{10}$"
+                                    v-model="registerInfo.phone"
+                                    class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
+                                <label>手机</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <input type="password" name="password" required="required"
+                                    v-model="registerInfo.password"
+                                    class="validate ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required" />
+                                <label>密码</label>
+                            </div>
+                            <div ng-show="checkTelIsShow" class="col s12">
+                                <button type="button" v-on:click="register"
+                                    class="waves-effect waves-light btn verify-btn red lighten-1">
+                                    <i class="iconfont left"></i>
+                                    <em>点击注册</em>
+                                </button>
+                            </div>
+                            <div ng-show="checkTelIsShow" class="login-area col s12">
+                                <em>已有账号？去</em>
+                                <a th:onclick="'showLogin()'">登录</a>
+                            </div>
+                        </div>
+                        <!--                    </form>-->
                     </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 15:43:59
-        描述：校园代步
+        <!--
+        描述：更改用户名
     -->
-    <div class="index-title">
-        <a href="">校园代步</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods2}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
+        <div ng-controller="changeNameController" class="ng-scope">
+            <div id="changeName" class="change-name stark-components">
+                <div class="publish-box z-depth-4">
+                    <div class="row">
+                        <div class="col s12 title">
+                            <h1>修改用户名</h1>
+                        </div>
+                        <form th:action="@{/user/changeName}" method="post" commandName="user" role="form">
+                            <div class="input-field col s12">
+                                <input type="text" name="username" required="required"
+                                    class="validate ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-pattern ng-touched" />
+                                <label>修改用户名</label>
+                            </div>
+                            <div ng-show="checkTelIsShow" class="col s12">
+                                <button class="waves-effect waves-light btn publish-btn red lighten-1">
+                                    <i class="iconfont left"></i>
+                                    <em>确认</em>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 15:59:28
-        描述：电器日用
+        <!--
+        描述：左侧导航条
     -->
-    <div class="index-title">
-        <a href="">电器日用</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods3}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
-                    </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
+
+        <div ng-controller="sidebarController" class="sidebar stark-components ng-scope">
+            <li ng-class="{true: 'active'}[isAll]">
+                <!--            <a th:href="@{/goods/catelog/1}" class="index">-->
+                <a @click="getGoodsByCategory(0)" class="digital">
+                    <img th:src="@{/img/index.png}" />
+                    <em>最新发布</em>
                 </a>
+            </li>
+            <li ng-class="{true: 'active'}[isDigital]">
+                <a @click="getGoodsByCategory(1)" class="digital">
+                    <img th:src="@{/img/digital.png}" />
+                    <em>闲置数码</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isRide]">
+                <a @click="getGoodsByCategory(2)" class="ride">
+                    <img th:src="@{/img/ride.png}" />
+                    <em>校园代步</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isCommodity]">
+                <a @click="getGoodsByCategory(3)" class="commodity">
+                    <img th:src="@{/img/commodity.png}" />
+                    <em>电器日用</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isBook]">
+                <a @click="getGoodsByCategory(4)" class="book">
+                    <img th:src="@{/img/book.png}" />
+                    <em>图书教材</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isMakeup]">
+                <a @click="getGoodsByCategory(5)" class="makeup">
+                    <img th:src="@{/img/makeup.png}" />
+                    <em>美妆衣物</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isSport]">
+                <a @click="getGoodsByCategory(6)" class="sport">
+                    <img th:src="@{/img/sport.png}" />
+                    <em>运动棋牌</em>
+                </a>
+            </li>
+            <li ng-class="{true: 'active'}[isSmallthing]">
+                <a @click="getGoodsByCategory(7)" class="smallthing">
+                    <img th:src="@{/img/smallthing.png}" />
+                    <em>票券小物</em>
+                </a>
+            </li>
+            <div class="info">
+                <a href="" target="_blank">关于我们</a><em>-</em>
+                <a href="">联系我们</a>
+                <p>©2022 GDUFE</p>
             </div>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 16:00:15
-        描述：图书教材
+
+        <!--
+        描述：右侧显示部分
     -->
-    <div class="index-title">
-        <a href="">图书教材</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods4}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
+        <div class="main-content">
+            <!--
+            描述：右侧banner（图片）部分
+            中间部分公告
+        -->
+            <div class="slider-wapper" v-show="!isSearch">
+                <div class="slider" style="height: 200px; width: 800px; touch-action: pan-y; -webkit-user-drag: none;
+                 -webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+                    <ul class="slides" style="height: 186px;">
+                        <li class="active" style="opacity: 1;">
+                            <a href="">
+                                <div class="bannerimg">
+                                    <ul class="bannerul">
+                                        <!--                                <p class="text1">亲爱的同学们：</p>-->
+                                        <!--                                <p class="text2">欢迎来到广东财经大学校园二手工坊。临近毕业季的</p>-->
+                                        <!--                                <p class="text3">你，是否有太多的闲置与校友分享，为了追求更好的校园服</p>-->
+                                        <!--                                <p class="text4">务，我们打造了一个全新的校园平台——<span>广财大二手工坊</span></p>-->
+                                        <!--                                <p class="text5">这里有更多的闲置分享，更自由的校园话题讨论，你想要的，都在这里。</p>-->
+                                        <!--                                <p class="text6">加入Squirrel，你的大学，应更精彩。</p>-->
+                                        <p class="text1">欢迎来到西南科大二手交易市场</p>
+                                    </ul>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--        商品展示-->
+            <div v-for="(it,index) in data" :key="index" style="margin-top: 20px">
+                <div class="index-title">
+                    <a href="">{{it.category}}</a>
+                    <hr class="hr1" />
+                    <hr class="hr2" />
+                </div>
+                <div class="waterfoo stark-components row ">
+                    <div class="item-wrapper normal" v-for="(item,index) in it.data">
+                        <div :hidden="hidden">{{item}}</div>
+                        <!-- 如果数据的id不存在，说明没有任何的搜索结果，直接显示无搜索结果 -->
+                        <div style="color: red;font-size: 50px" v-if="!item.id">
+                            <p> {{item}}</p>
+
+                        </div>
+                        <div class="card col" v-else>
+                            <a :id="item.id" :href="item.href+item.id">
+                                <!-- 图片 -->
+                                <div class="card-image">
+                                    <img :src="item.imgUrl" />
+                                </div>
+                                <!-- 价格 -->
+                                <div class="card-content item-price">
+                                    ￥:{{item.price}}
+                                </div>
+                                <!-- 名称 -->
+                                <div class="card-content item-name">
+                                    商品名:{{item.name}}
+                                </div>
+                                <!-- 地理位置,上架时间 -->
+                                <div class="card-content item-location">
+                                    <p>{{item.location ? item.location : "西南科技大学" }}</p>
+                                    <p>{{item.polishTime}}</p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
+                </div>
+                <!-- 自己写的css，发现不兼容，放弃 
+                         <div class="goods_row"> 
+                    <div class="goods_main" v-for="(item,index) in it.data">
+                        <img class="goods_img" :src="item.imgUrl" alt="img" />
+                        <div class="goods_bottom">
+                            <br>
+                            <div class="price_img">
+                                <div class="">
+                                    <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.J9a6SukC7OCT2yZLRnMPWwHaHa?pid=ImgDet&rs=1"
+                                        alt="">
+                                </div>
+                                <div class="card-content item-price">
+                                    <p>{{item.price}}</p>
+                                </div>
+                            </div>
+                            <div style="padding-left: 5%;">商品名:<strong>{{item.name}}</strong></div>
+                            <br>
+                            <div class="code">
+                                <p>{{item.time}}</p>
+                                <p>{{school_name}}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
+                    -->
             </div>
         </div>
-    </div>
-    <!--
-        时间：2018/01/05 16:03:19
-        描述：美妆衣物
-    -->
-    <div class="index-title">
-        <a href="">美妆衣物</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods5}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
-                    </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!--
-        时间：2018/01/05 16:06:57
-        描述：运动棋牌
-    -->
-    <div class="index-title">
-        <a href="">运动棋牌</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods6}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
-                    </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!--
-        时间：2018/01/05 16:10:50
-        描述：票券小物
-    -->
-    <div class="index-title">
-        <a href="">票券小物</a>
-        <hr class="hr1" />
-        <hr class="hr2" />
-    </div>
-    <div class="waterfoo stark-components row">
-        <div class="item-wrapper normal" th:each="item : ${catelogGoods7}">
-            <div class="card col">
-                <a th:href="@{'/goods/goodsId/'+${item.goods.id}}">
-                    <div class="card-image">
-                        <!--<img th:src="@{/upload/${item.images[0].imgUrl}}" />-->
-                        <img th:src="@{'/upload/'+${item.images[0].imgUrl}}" />
-                    </div>
-                    <div class="card-content item-price" th:text="${item.goods.price}"></div>
-                    <div class="card-content item-name">
-                        <p th:text="${item.goods.name}"></p>
-                    </div>
-                    <div class="card-content item-location">
-                        <p>广东财经大学</p>
-                        <p th:text="${item.goods.startTime}"></p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+
+        <script>
+            function showLogin() {
+                if ($("#signup-show").css("display") == 'block') {
+                    $("#signup-show").css("display", "none");
+                }
+                if ($("#login-show").css("display") == 'none') {
+                    $("#login-show").css("display", "block");
+                } else {
+                    $("#login-show").css("display", "none");
+                }
+            }
+
+            function showSignup() {
+                if ($("#login-show").css("display") == 'block') {
+                    $("#login-show").css("display", "none");
+                }
+                if ($("#signup-show").css("display") == 'none') {
+                    $("#signup-show").css("display", "block");
+                } else {
+                    $("#signup-show").css("display", "none");
+                }
+            }
+
+            function ChangeName() {
+                if ($("#changeName").css("display") == 'none') {
+                    $("#changeName").css("display", "block");
+                } else {
+                    $("#changeName").css("display", "none");
+                }
+            }
+
+            const a = {
+                data() {
+                    return {
+                        baseURL: "http://localhost:8001",//根路径
+                        // baseURL: "162.14.110.150:8001",
+                        is_login: false,//是否登录
+                        store: [],
+                        news: [],
+                        data: [],//展示在页面的商品的对象数组
+                        goodsData: [],//商品数据
+                        categoriesData: [], //分类数据
+                        category: [],
+                        hidden: "hidden",
+                        userInfo: {//登录的用户信息
+                            phone: "",
+                            password: "",
+                        },
+                        registerInfo: {
+                            phone: "",
+                            username: "",
+                            password: "",
+                        },//注册信息
+                        searchInfo: "",//搜索的关键字
+                        isSearch: false,//是否是搜索结果:如果是搜素结果，将不会显示公告栏
+                        pageURL: {
+                            publishGoods: "/goods/publishGoods/",//跳转到发布商品页
+                            myGoods: "/user/allGoods/",//我发布的商品
+                            home: "/user/home/",//跳转到个人中心
+                            login: "/user/login/",//登录接口
+                            logout: "/user/logout/",//退出登录
+                            main: "/goods/homeGoods/",//主页
+                            search: "/goods/search/",//跳转到搜索页
+                            getGoods: "/goods/getGoods/",//获取商品，可跟商品分类id
+                            register: "/user/register/",//注册接口
+                        },
+                        user: {//显示在页面的用户信息
+                            id: "",
+                            username: "",
+                            password: ""
+                        },
+                    }
+                },
+                methods: {
+                    //获取商品信息
+                    async getGoodsData(categoryId) {
+                        //获取商品的数据，若categoryId为空，则默认为-1，表示获取全部的商品
+                        await axios({
+                            url: this.pageURL.getGoods + (!categoryId ? "-1" : categoryId),
+                            method: 'get',
+                            header: {
+                                "token": this.getToken()
+                            },
+                        }).then(res => {
+                            if (res.data.code === 200) {
+                                this.goodsData = res.data.data;
+                            } else {
+                                console.log("获取商品失败")
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                        })
+                    },
+                    //获取分类信息
+                    async getCategory(url) {
+                        await axios.get(url).then((res) => {
+                            if (res.data.code === 200) {
+                                this.categoriesData = res.data.data
+                            } else {
+                                console.log("获取分类数据失败")
+                            }
+                        }).catch((error) => {
+                            console.log("发生了错误")
+                        })
+                    },
+                    // init方法，初始化首页数据
+                    async init() {
+                        this.isSearch = false
+                        await this.getCategory("/category/list")
+                        for (let index in this.categoriesData) {
+                            let item = this.categoriesData[index];
+                            await this.getGoodsData(item.id)
+                            this.data.push({
+                                category: item.name,
+                                data: this.goodsData
+                            })
+                        }
+                    },
+                    login() {
+                        axios.post(this.pageURL.login, this.userInfo).then((res) => {
+                            console.log(res);
+                            //如果登录成功，将用户的token保存在浏览器
+                            if (res.data.code === 200) {
+                                // 登录成功以后，将用户信息保存到本地
+                                localStorage.setItem("token", res.data.data.token);
+                                localStorage.setItem("userInfo", res.data.data.userInfo);
+                                this.is_login = true;
+                                //获取用户信息
+                                this.getUserInfo();
+                            } 
+                            else if(res.data.code === 406){
+                                //认证失败，登录失败
+                                alert("登录失败")
+                            }
+                            else if (res.data.code === 501) {
+                                //token过期
+                                this.initUserInfo(res.data.msg)
+                            } else {
+                                alert("登录失败")
+                            }
+                        }).catch(error => {
+                            alert("登录失败")
+                        })
+                    },
+                    getUserInfo() {
+                        //登录成功以后，token有效期内访问，通过token去获取用户信息
+                        //每次 请求页面都要带上这个token
+                        var token = localStorage.getItem("token");
+                        if (!token) {
+                            console.log("请登录!")
+                            this.is_login = false;
+                            return;
+                        }
+                        axios({
+                            url: "/user/getUserInfo",
+                            method: "get",
+                            headers: { "token": token },
+                            params: {}
+                        }).then(res => {
+                            //得到user信息
+                            if (res.data.code === 200) {
+                                //说明是已经登录的，返回成功的信息
+                                this.user = res.data.data;
+                                localStorage.setItem("userInfo", JSON.stringify(this.user))
+                            } else if (res.data.code === 501) {
+                                //token过期
+                                this.initUserInfo(res.data.msg)
+                            } else {
+                                alert("服务器错误")
+                            }
+                        }).catch(error => {
+                            //用户信息获取失败，提示用户登录
+                            console.log("服务器错误");
+                        })
+                    },
+                    //从保存到本地的数据中获取用户信息
+                    getUserInfoFromLocal() {
+                        let userInfo = localStorage.getItem("userInfo")
+                        // console.log(JSON.stringify(userInfo))//将json对象转化为json字符串
+                        // console.log(JSON.parse(userInfo))//将json字符串变成json对象
+                        if (!!userInfo) {
+                            let user = JSON.parse(userInfo);
+                            this.is_login = true
+                            this.user.id = user.id
+                            this.user.username = user.username
+                            this.user = user;
+                        } else {
+                            this.initUserInfo()
+                        }
+                    },
+                    getToken() {
+                        return localStorage.getItem("token")
+                    },
+                    //退出登录
+                    logout() {
+                        axios.get(this.pageURL.logout).then(res => {
+                            console.log(res.data.code)
+                        })
+                        this.initUserInfo();
+                    },
+                    //重置用户信息
+                    initUserInfo(msg) {
+                        this.user = {}
+                        this.is_login = false;
+                        localStorage.removeItem("token")
+                        localStorage.removeItem("userInfo")
+                    },
+                    // 注册
+                    register() {
+                        axios.post(this.pageURL.register, this.registerInfo)
+                            .then(res => {
+                                if (res.data.code === 200) {
+                                    this.registerInfo = {}
+                                    console.log("注册成功")
+                                    alert("注册成功")
+                                } else if (res.data.code === 600) {
+                                    console.log("注册失败")
+                                    alert(res.data.msg)
+                                }
+                            }).catch(error => {
+                                alert("服务器错误")
+                            })
+                    },
+                    //搜索商品
+                    async search() {
+                        if (!this.searchInfo) {
+                            alert("请输入搜索关键字！")
+                            return
+                        }
+                        this.isSearch = true
+                        console.log("搜索")
+                        await axios.get(this.pageURL.search + "?info=" + this.searchInfo).then(res => {
+                            let result = res.data.data
+                            this.data = [{
+                                category: "搜索结果",//category是一个数组
+                                data: result.length === 0 ? ['无搜索结果'] : result //data也是一个数组
+                            }]
+                        }).catch(error => {
+                            console.log("请求数据失败")
+                        })
+                    },
+                    //点击左侧侧边栏搜索商品
+                    async getGoodsByCategory(categoryId) {
+                        //获得catergory的名字
+                        var name;
+                        this.categoriesData.forEach(i => {
+                            if (i.id === categoryId) {
+                                name = i.name;
+                            }
+                        })
+                        await this.getGoodsData(categoryId)
+                        this.data.data = this.goodsData
+                        this.data = [{
+                            category: name,
+                            data: this.goodsData
+                        }]
+                        this.isSearch = true;
+                    }
+                },
+                mounted() {
+                    this.init()
+                    this.getUserInfo()
+                },
+                created() {
+                    //从本地获取用户信息显示
+                    this.getUserInfoFromLocal();
+                }
+            };
+            Vue.createApp(a).mount(".app");
+        </script>
+
+
 </body>
+
 </html>

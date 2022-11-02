@@ -103,4 +103,8 @@ public interface GoodsMapper {
      * @return
      */
     List<Goods> getGoodsByUserId(Integer user_id);
+
+    List<Goods> searchByName(@Param("info") String info);
+
+    List<Goods> searchByCategory(@Param("info") String info);
 }

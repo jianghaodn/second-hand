@@ -1,7 +1,10 @@
 package com.squirrel.service;
 
 import com.squirrel.pojo.User;
+import com.squirrel.util.ResponseResult;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +18,7 @@ public interface UserService {
     User selectByPrimaryKey(Integer id);
     List<User> getPageUser(int pageNum,int pageSize);
     int getUserNum();
-    InputStream getInputStream() throws Exception;
+
 
     Map<String, Object> getUsers(int pageNum, int pageSize);
 
@@ -30,4 +33,12 @@ public interface UserService {
     List<User> getUsersByIds(List<Integer> ids);
 
     List<User> getUsersByIds(Set<Integer> ids);
+
+    ResponseResult login(User user);
+
+    ResponseResult logout(User user);
+
+    ResponseResult getUserInfo(HttpServletRequest request);
+
+    ResponseResult register(User user);
 }

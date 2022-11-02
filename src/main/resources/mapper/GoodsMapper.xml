@@ -84,6 +84,18 @@
         order by polish_time DESC
         limit #{limit,jdbcType=INTEGER}
     </select>
+    <select id="searchByName" resultType="com.squirrel.pojo.Goods">
+        select <include refid="Base_Column_List"></include>
+            from t_shop_goods where name like concat('%',#{info},'%')
+    </select>
+    <select id="searchByCategory" resultType="com.squirrel.pojo.Goods">
+        select <include refid="Base_Column_List"></include>
+            from t_shop_goods as tg where tg.catelog_id in (
+                select id
+                from t_shop_catelog  as tc
+                where tc.name like concat('%',#{info},'%')
+        )
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
         delete from t_shop_goods
