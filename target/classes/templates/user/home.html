@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="">
+<head>
+    <meta charset="UTF-8"/>
+    <title>个人中心</title>
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/emoji.css}"/>
+    <link rel="stylesheet" th:href="@{/css/userhome.css}"/>
+    <link rel="stylesheet" th:href="@{/css/user.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.41/dist/vue.global.min.js"></script>
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
+
+</head>
+<style>
+    /*定义警告框的动画样式*/
+    @keyframes alt {
+        0% {
+            left: -50px
+        }
+        100% {
+            left: 90px
+        }
+    }
+
+    .alert_msg {
+        animation-name: alt;
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+        z-index: 999;
+        top: 2px;
+    }
+</style>
+<body>
+
+
+<div id="app">
+
+
+    <div class="pre-2" id="big_img">
+        <img th:src="@{http://findfun.oss-cn-shanghai.aliyuncs.com/images/head_loading.gif}"
+             class="jcrop-preview jcrop_preview_s"/>
+    </div>
+    <div class="alert alert-danger alert-dismissable text-center"
+         :class="!!alert_flag?'alert_msg':''"
+         v-show="alert_flag"
+         role="alert" style="float: top;position: fixed;width: auto;z-index: 1000">{{alert_msg}}
+    </div>
+
+    <div id="cover" style="min-height: 639px;">
+        <div id="user_area">
+            <div id="home_header">
+                <a :href="pageURL.main">
+                    <h1 class="logo"></h1>
+                </a>
+                <a :href="pageURL.home">
+                    <div class="home"></div>
+                </a>
+            </div>
+            <!--
+                描述：左侧个人中心栏
+            -->
+            <div id="user_nav">
+                <div class="user_info">
+                    <div class="head_img">
+                        <img :src="user.portrait"/>
+                    </div>
+                    <!--                    大头像，鼠标移动到头像上可以将头像放大-->
+                    <div class="big_headimg">
+                        <img src="" alt="大头像"/>
+                    </div>
+
+                    <span class="name">{{user.username}}</span>
+                    <span class="school">{{school_name}}</span>
+                    <!--                闲置数量-->
+                    <span class="name">闲置数量：{{user.goods_num}}</span>
+                    <span class="fa fa-share-alt">"快去分享一下"</span>
+                </div>
+                <div class="home_nav">
+                    <ul>
+                        <a  @click="showPage('information')">
+                            <li class="notice">
+                                <div></div>
+                                <span>我的消息</span>
+                                <strong></strong>
+                            </li>
+                        </a>
+                        <a @click="showPage('care')">
+                            <li class="fri">
+                                <div></div>
+                                <span>关注列表</span>
+                                <strong></strong>
+                            </li>
+                        </a>
+                        <!--                    <a th:href="@{/user/basic}">-->
+                        <a  @click="showPage('setting')">
+                            <li class="set">
+                                <div></div>
+                                <span>个人设置</span>
+                                <strong></strong>
+                            </li>
+                        </a>
+                        <a @click="showPage('upload')">
+                            <li class="store">
+                                <div></div>
+                                <span>发布物品</span>
+                                <strong></strong>
+                            </li>
+                        </a>
+                        <!--                    <a th:href="@{/user/allGoods}">-->
+                        <a @click="showPage('myGoods')">
+                            <li class="second">
+                                <div></div>
+                                <span>我的闲置</span>
+                                <strong></strong>
+                            </li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <!--
+                描述：右侧内容区域
+                可能是发布新鲜事
+                可能是发布商品
+                可能是我的消息
+                可能是关注列表
+                可能是我的闲置
+                因此这个可以嵌入一个iframe，点击对应事件的时候就触发这个iframe
+                或者也可以做成模态框的形式
+            -->
+
+            <!--        用户操作区-->
+
+            <!--&lt;!&ndash;                一个分页插件&ndash;&gt;-->
+
+            <!--                <nav aria-label="Page navigation" class="text-center">-->
+            <!--                    <ul class="pagination">-->
+            <!--                        <li>-->
+            <!--                            <a href="#" aria-label="Previous">-->
+            <!--                                <span aria-hidden="true">&laquo;</span>-->
+            <!--                            </a>-->
+            <!--                        </li>-->
+            <!--                        <li><a href="#">1</a></li>-->
+            <!--                        <li><a href="#">2</a></li>-->
+            <!--                        <li><a href="#">3</a></li>-->
+            <!--                        <li><a href="#">4</a></li>-->
+            <!--                        <li><a href="#">5</a></li>-->
+            <!--                        <li>-->
+            <!--                            <a href="#" aria-label="Next">-->
+            <!--                                <span aria-hidden="true">&raquo;</span>-->
+            <!--                            </a>-->
+            <!--                        </li>-->
+            <!--                    </ul>-->
+            <!--                </nav>-->
+
+            <!--                    TODO 在主页展示最近的一件个人物品-->
+
+            <!--            隐藏域，用于获取model传输的数据-->
+            <input hidden="hidden" th:text="${target}" id="model" th:value="${target}">
+
+
+            <div id="user_content">
+                <div class="basic">
+                    <!--                    物品上传页面-->
+                    <div v-if="target === 'upload'">
+                        <div class="page-header">
+                            <h1 style="padding-left: 0">发布物品</h1>
+                        </div>
+                        <div style="width: 500px;padding-top: 10px">
+                            <form class="form-horizontal" action="/goods/uploadGoods"
+                                  enctype="multipart/form-data" method="post">
+                                <div class="form-group">
+                                    <label for="name" class="col-sm-2 control-label">名称</label>
+                                    <div class="col-lg-8">
+                                        <input type="text"
+                                               v-model="product.name"
+                                               class="form-control" id="name" placeholder="商品名称">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="price" class="col-sm-2 control-label">价格</label>
+                                    <div class="col-lg-8">
+                                        <div class="input-group has-success">
+                                            <input type="text" class="form-control"
+                                                   v-model="product.price"
+                                                   id="price" placeholder="商品价格">
+                                            <span class="input-group-addon">￥</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="forePrice" class="col-sm-2 control-label">原价</label>
+                                    <div class="col-lg-8">
+                                        <div class="input-group has-success">
+                                            <input type="text" class="form-control" id="forePrice"
+                                                   v-model="product.forePrice"
+                                                   placeholder="商品原价">
+                                            <span class="input-group-addon">￥</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--                            //绑定分类数据-->
+                                <div class="form-group">
+                                    <label for="category" class="col-sm-2 control-label">类别</label>
+                                    <div class="col-lg-8" id="category">
+                                        <select class="form-control" v-model="product.catelog_id">
+                                            <option disabled value="">请选择商品类别</option>
+                                            <option v-for="(item,index) in categoriesData"
+                                                    :value="item.id">
+                                                {{item.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="info" class="col-sm-2 control-label">描述</label>
+                                    <div class="col-lg-8" id="info">
+                                    <textarea class="form-control col-lg-2" rows="3" cols="10"
+                                              maxlength="200"
+                                              placeholder="商品描述"
+                                              v-model="product.description"
+                                              style="resize: none;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="img">图片</label>
+                                    <div class="col-lg-3" id="img">
+                                        <input type="file" multiple id="uploadFile">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" v-model="product_check"> 我同意平台公约，不发布违规物品
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-offset-2 col-lg-2">
+                                        <button type="button"
+                                                @click="uploadProduct"
+                                                class="btn btn-primary">发布
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--                    我的闲置页面-->
+                    <div v-if="target === 'myGoods'">
+                        你还没发布任何闲置呢！
+                    </div>
+                    <!--                    我的消息页面-->
+                    <div v-if="target === 'information'">
+                        你还没任何消息呢！
+                    </div><!--                    我的关注页面-->
+                    <div v-if="target === 'care'">
+                        你还没关注任何人呢！
+                    </div><!--                    我的个人设置页面-->
+                    <div v-if="target === 'setting'">
+                        暂时无权限设置
+                    </div>
+
+                </div>
+                <!--
+                TODO::目前是静态的
+                时间：2018/01/06
+                描述：最右侧,可能认识的人
+            -->
+                <div class="recommend" style="position: fixed;right: 150px;top: 50px;height: 500px">
+                    <div class="title">
+                        <span class="text">可能认识的人</span>
+                        <span class="change" @click="change">换一组</span>
+                        <span class="underline"></span>
+                    </div>
+                    <ul>
+                        <li v-for="(item,index) in people">
+                            <a href="" class="head_img">
+                                <img :src="'/img/photo'+(index+1)+'.jpg'"/>
+                            </a>
+                            <span>{{item}}</span>
+                            <div class="fa fa-plus-square"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    const app = {
+        data() {
+            return {
+                baseURL: "http://localhost:8001",//根路径,
+                pageURL: {
+                    publishGoods: "/goods/publishGoods",//跳转到发布商品页
+                    myGoods: "/user/allGoods",//我发布的商品
+                    home: "/user/home",//跳转到个人中心
+                    logout: "/user/logout",//退出登录
+                    main: "/",//主页
+                    userSetting: "/user/basic",//个人设置
+                    myConcern: "/user/myConcern",//跳转到我的关注
+                    uploadUrl: "/goods/uploadGoods",//发布商品的接口
+                    category: "/category/list",//获取全部的分类的接口
+                    getUserInfo: "/user/getUserInfo",//获取用户信息
+                },
+                user: {},
+                school_name: "西南科技大学",
+                product: {
+                    name: "",
+                    price: "",
+                    forePrice: "",
+                    description: "",
+                    catelog_id: "",
+                },
+                target: "information",//跳转目标，保存类似发布商品这样的请求
+                default_target:"information",//默认的请求目标
+                pages:['care','information','setting','upload','myGoods'],//左侧菜单页
+                is_login: false,//是否登录
+                alert_msg: "默认警告消息",//警告消息，当未登录或者其他错误的时候进行提示
+                alert_flag: false,//警告标志，是否显示
+                allPeople: ['lily', 'tom', '张三', '李四', 'tony', '玫瑰', 'tony', '王二'],
+                people: [],//显示右侧的可能认识的人
+                categoriesData: {},//分类数据
+            }
+        },
+        methods: {
+            //载入右侧可能认识的人的信息
+            autoLoadKnowPeople(){
+                this.change();
+            },
+            //页面加载完成以后，自动 加载用户信息
+            //加载信息的凭证由token获得
+            autoLoadUserInfo() {
+                axios({
+                    url: this.pageURL.getUserInfo,
+                    method: "get",
+                    headers: {"token": this.getToken()},
+                    params: {}
+                }).then(res => {
+                    //得到user信息
+                    if (res.data.code === 200) {
+                        //说明是已经登录的，返回成功的信息
+                        this.user = res.data.data.user;
+                        this.user.goods_num = res.data.data.goodsNum;
+                        //从返回的信息中获取user信息
+                        this.is_login = true;
+                        this.autoLoadKnowPeople()
+                    } else if (res.data.code === 501) {
+                        this.initUserInfo(res.data.msg);
+                    } else {
+                        console.log("服务器开小差了");
+                    }
+                }).catch(error => {
+                    //获取个人信息失败，直接提示需要登录,重定向到登录页/主页
+                    this.showAlertMsg(error)
+                })
+            },
+            //重置用户信息
+            initUserInfo(msg) {
+                console.log("登录已经过期！")
+                this.showAlertMsg(msg)
+                this.user = {}
+                localStorage.removeItem("token")
+                localStorage.removeItem("userInfo")
+                this.people = []
+            },
+            getToken() {
+                return localStorage.getItem("token")
+            },
+            //上传商品
+            uploadProduct() {
+                if (!this.is_login) {
+                    // alert("还未登录！")
+                    this.showAlertMsg("还未登录 !");
+                    return;
+                }
+                //获得全部的图片文件
+                const uploadFileEle = document.getElementById("uploadFile");
+                let files = Array.from(uploadFileEle.files);
+                let objectString = {
+                    name: this.product.name,
+                    price: this.product.price,
+                    realPrice: this.product.forePrice,
+                    describle: this.product.description,
+                    catelogId: this.product.catelog_id,
+                }
+                objectString = JSON.stringify(objectString);
+                let data = new window.FormData();
+                data.append('objectString', objectString)
+                for (let i = 0; i < files.length; i++) {
+                    data.append('file', files[i]);
+                }
+                // data.append('file',files)
+                //将得到的文件上传上去
+                axios({
+                    url: this.pageURL.uploadUrl,
+                    method: "post",
+                    data: data,
+                    headers: {
+                        'Content-Type': 'multipart/form-data;boundary = ' + new Date().getTime(),
+                        'token': this.getToken()
+                    }
+                }).then(res => {
+                    console.log(res);
+                    let code = res.data.code;
+                    if (code === 200) {
+                        //发布成功,跳转到我的闲置
+                        this.target = 'myGoods';
+                    } else if (code === 401) {
+                        //没有登录,跳转到登录页面
+                        this.showAlertMsg(res.data.msg)
+                        window.location = this.pageURL.main
+                    } else if (code === 500) {
+                        //内部服务器错误
+                        this.showAlertMsg("服务器错误:" + res.data.msg)
+                    } else {
+                        this.showAlertMsg("发生未知错误")
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    this.showAlertMsg(error)
+                })
+            },
+            //获取从model中传递的数据，可以为空
+            getModelInfo() {
+                let model = $("#model").val();
+                if(this.pages.indexOf(model) !==-1){
+                    this.target = model;
+                }else {
+                    //如果这样直接跳转的话，不会携带header，那么后台会认为没有登录，强行跳转到登录页
+                    // window.location=this.pageURL.home
+
+                }
+                //如果target有值，说明需要跳转
+                if (!!this.target) {
+                    // TODO 将target对应目标页设置为显示
+                }
+            },
+            //显示对应的一个组件
+            showPage(target) {
+                this.target = target;
+            },
+            //显示警告框
+            showAlertMsg(msg, timeOut) {
+                this.alert_flag = true;
+                this.alert_msg = msg;
+                //警告框5秒后消失
+                setTimeout(() => {
+                    this.alert_flag = false;
+                }, !!timeOut ? timeOut : 5000);
+            },
+            //可能认识的人，换一换
+            change() {
+                if (!this.is_login) {
+                    return;
+                }
+                this.people = [];
+                for (let i = 0; i < 5;) {
+                    let p = this.allPeople[Math.floor(Math.random() * 5)];
+                    if (this.people.indexOf(p) === -1) {
+                        this.people.push(p);
+                        i++;
+                    }
+                }
+            },
+            //获取商品类别
+            //获取分类信息
+            async getCategory(url) {
+                await axios.get(url).then((res) => {
+                    if (res.data.code === 200)
+                        this.categoriesData = res.data.data;
+                    else {
+                        console.log("获取分类数据失败");
+                        this.showAlertMsg("获取分类数据失败");
+                    }
+                }).catch((error) => {
+                    console.log("发生了错误");
+                })
+                console.log("请求执行完毕");
+            },
+            //检查本地的token信息，查看是否已经登录
+            checkLoginInfo() {
+                const token = this.getToken();
+                if (!!token) {
+                    this.is_login = true;
+                }
+            }
+        },
+        mounted() {
+            this.getModelInfo();
+            this.getCategory(this.pageURL.category);
+        },
+        created() {
+            //页面还没创建好，获取不到model中的属性
+            // this.getModelInfo()
+            //加载完毕自动执行
+            this.autoLoadUserInfo();
+        }
+    }
+    Vue.createApp(app).mount("#app");
+</script>
+
+</body>
+
+</html>
